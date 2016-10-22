@@ -9,11 +9,13 @@ namespace TagsCloudVisualization
         private readonly Spiral spiral;
         private readonly List<Rectangle> rectangles = new List<Rectangle>();
         private int currentNumber;
-        public CircularCloudLayouter(Point center, double spiralIntensity)
+        private Size cloudSize;
+        public CircularCloudLayouter(Point center, double spiralIntensity, Size cloudSize)
         {
             Center = center;
             spiral = new Spiral(spiralIntensity, Center);
             currentNumber = 0;
+            this.cloudSize = cloudSize;
         }
 
         public Rectangle PutNextRectangle(Size rectangleSize)

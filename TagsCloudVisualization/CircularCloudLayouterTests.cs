@@ -9,7 +9,7 @@ namespace TagsCloudVisualization
         public void putInCloudCenter_FirstRectangle()
         {
             var center = new Point(100, 100);
-            var cloudLayouter = new CircularCloudLayouter(center, 0.5);
+            var cloudLayouter = new CircularCloudLayouter(center, 0.5, new Size(1000, 1000));
 
             var rectangleSize = new Size(10, 10);
             var resultedRectangle = cloudLayouter.PutNextRectangle(rectangleSize);
@@ -31,7 +31,7 @@ namespace TagsCloudVisualization
         public void doesNotIntersect_TwoRectangles()
         {
             var center = new Point(100, 100);
-            var cloudLayouter = new CircularCloudLayouter(center, 0.5);
+            var cloudLayouter = new CircularCloudLayouter(center, 0.5, new Size(1000, 1000));
 
             var rectangleSize = new Size(10, 10);
             var firstRectangle = cloudLayouter.PutNextRectangle(rectangleSize);
@@ -43,7 +43,7 @@ namespace TagsCloudVisualization
         public void areNotSame_TwoRectangles()
         {
             var center = new Point(100, 100);
-            var cloudLayouter = new CircularCloudLayouter(center, 0.5);
+            var cloudLayouter = new CircularCloudLayouter(center, 0.5, new Size(1000, 1000));
 
             var rectangleSize = new Size(10, 10);
             var firstRectangle = cloudLayouter.PutNextRectangle(rectangleSize);

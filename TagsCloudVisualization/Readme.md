@@ -1,1 +1,1 @@
-![alt tag](https://raw.githubusercontent.com/Saylala/tdd/tree/master/TagsCloudVisualization/Examples/Example1.png)
+[[https://github.com/Saylala/repository/tdd/master/TagsCloudVisualization/Examples/Example1.png|alt=Example]]

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace TagsCloudVisualization
@@ -8,8 +9,9 @@ namespace TagsCloudVisualization
         public static IEnumerable<System.Drawing.Rectangle> MakeData(CircularCloudLayouter layouter, int count, int width)
         {
             var bias = 5;
+            var rnd = new Random();
             for (var i = bias; i < count + bias; i++)
-                layouter.PutNextRectangle(new Size(i, i));
+                layouter.PutNextRectangle(new Size(rnd.Next(20, 30), rnd.Next(10, 15)));
             var result = layouter.GetRectangles();
             return result.Select(x =>
                 new System.Drawing.Rectangle(

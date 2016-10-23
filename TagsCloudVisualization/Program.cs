@@ -5,24 +5,26 @@ namespace TagsCloudVisualization
 {
     class Program
     {
-        public static IEnumerable<System.Drawing.Rectangle> MakeData(CircularCloudLayouter layouter, int count)
+        public static IEnumerable<System.Drawing.Rectangle> MakeData(CircularCloudLayouter layouter, int count, int width)
         {
-            for (var i = 0; i < count; i++)
-                layouter.PutNextRectangle(new Size(i + 1, i + 1));
+            var bias = 5;
+            for (var i = bias; i < count + bias; i++)
+                layouter.PutNextRectangle(new Size(i, i));
             var result = layouter.GetRectangles();
             return result.Select(x =>
                 new System.Drawing.Rectangle(
-                    x.Vertices[0].X,
-                    x.Vertices[0].Y,
-                    x.Vertices[3].X - x.Vertices[0].X,
-                    x.Vertices[3].Y - x.Vertices[0].Y));
+                    x.Vertices[0].X + width,
+                    x.Vertices[0].Y + width,
+                    x.Vertices[3].X - x.Vertices[0].X - width,
+                    x.Vertices[3].Y - x.Vertices[0].Y - width));
         }
         static void Main(string[] args)
         {
+            var width = 1;
             var intesity = double.Parse(args[0]);
-            var visualiser = new RectangleVisualizer();
+            var visualiser = new CloudVisualizer();
             var layouter = new CircularCloudLayouter(new Point(500, 500), intesity, new Size(1000, 1000));
-            var testData = MakeData(layouter, 100);
+            var testData = MakeData(layouter, 150, width);
             visualiser.Visualise(testData, $"test{intesity}.png");
         }
     }

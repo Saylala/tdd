@@ -10,6 +10,16 @@
             Y = y;
         }
 
+        public bool IsInside(Rectangle border)
+        {
+            var left = border.Vertices[0].X;
+            var right = border.Vertices[3].X;
+            var bottom = border.Vertices[0].Y;
+            var top = border.Vertices[3].Y;
+
+            return left < X && X < right && Y < top && Y > bottom;
+        }
+
         public override bool Equals(object obj)
         {
             if (!(obj is Point))

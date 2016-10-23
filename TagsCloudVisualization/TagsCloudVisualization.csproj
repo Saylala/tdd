@@ -65,13 +65,14 @@
   <ItemGroup>
     <Compile Include="CircularCloudLayouter.cs" />
     <Compile Include="CircularCloudLayouterTests.cs" />
+    <Compile Include="ICurve.cs" />
     <Compile Include="Point.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rectangle.cs" />
     <Compile Include="Size.cs" />
     <Compile Include="Spiral.cs" />
-    <Compile Include="RectangleVisualizer.cs" />
+    <Compile Include="CloudVisualizer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

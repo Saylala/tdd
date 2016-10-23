@@ -3,25 +3,25 @@
 
 namespace TagsCloudVisualization
 {
-    class Spiral
+    class Spiral : ICurve
     {
         private readonly double step;
-        private const double Bias = 50;
-        private readonly Point center;
+        private const double Frequency = 50;
+        private readonly Point bias;
 
-        public Spiral(double step, Point center)
+        public Spiral(double step, Point bias)
         {
             this.step = step;
-            this.center = center;
+            this.bias = bias;
         }
 
         public Point GetNextPoint(int currentNumber)
         {
-            var phi = Bias * currentNumber;
+            var phi = Frequency * currentNumber;
             var r = step * currentNumber;
             var x = r * Math.Cos(phi);
             var y = r * Math.Sin(phi);
-            return new Point(center.X + (int)x, center.Y + (int)y);
+            return new Point(bias.X + (int)x, bias.Y + (int)y);
         }
     }
 }

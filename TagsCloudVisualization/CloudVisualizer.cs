@@ -10,6 +10,7 @@ namespace TagsCloudVisualization
         private readonly Color backgroundColor;
         private readonly int imageWidth;
         private readonly int imageHeight;
+
         public CloudVisualizer(Pen pen, Color backgroundColor, int imageWidth, int imageHeight)
         {
             this.pen = pen;
@@ -17,6 +18,7 @@ namespace TagsCloudVisualization
             this.imageWidth = imageWidth;
             this.imageHeight = imageHeight;
         }
+
         public CloudVisualizer()
         {
             pen = new Pen(Color.Yellow, 1);
@@ -24,7 +26,8 @@ namespace TagsCloudVisualization
             imageWidth = 1000;
             imageHeight = 1000;
         }
-        public void Draw(IEnumerable<System.Drawing.Rectangle> data, Bitmap image)
+
+        public void Draw(IEnumerable<Rectangle> data, Bitmap image)
         {
             var graphics = Graphics.FromImage(image);
             graphics.Clear(backgroundColor);
@@ -33,7 +36,7 @@ namespace TagsCloudVisualization
             graphics.Save();
         }
 
-        public void Visualise(IEnumerable<System.Drawing.Rectangle> data, string filename)
+        public void Visualise(IEnumerable<Rectangle> data, string filename)
         {
             var image = new Bitmap(imageWidth, imageHeight);
             Draw(data, image);

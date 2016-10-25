@@ -1,7 +1,9 @@
-﻿namespace TagsCloudVisualization
+﻿using System.Drawing;
+
+namespace TagsCloudVisualization
 {
     interface ICurve
     {
-        Point GetNextPoint(int currentNumber);
+        Point GetNextPoint();
     }
 }

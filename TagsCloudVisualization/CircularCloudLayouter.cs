@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Drawing;
 
 namespace TagsCloudVisualization
 {
@@ -8,43 +9,35 @@ namespace TagsCloudVisualization
         public Point Center { get; }
         private readonly Spiral spiral;
         private readonly List<Rectangle> rectangles = new List<Rectangle>();
-        private readonly Rectangle cloudBorder;
-        private int currentNumber;
-        public CircularCloudLayouter(Point center, double spiralIntensity, Size cloudSize)
+        public CircularCloudLayouter(Point center)
         {
             Center = center;
-            spiral = new Spiral(spiralIntensity, Center);
-            cloudBorder = new Rectangle(center, cloudSize);
-            currentNumber = 0;
+            spiral = new Spiral(Center);
         }
 
         public Rectangle PutNextRectangle(Size rectangleSize)
         {
-            var point = rectangles.Count > 0 ? rectangles[rectangles.Count - 1].Center : Center;
-            var newPoint = GetNextPoint(point, rectangleSize, spiral);
-            if (newPoint == null)
-                return null;
-            var rectangle = new Rectangle(newPoint, rectangleSize);
+            var previousPoint = rectangles.Count > 0 ? rectangles[rectangles.Count - 1].GetCenter() : Center;
+            var currentPoint = GetNextPoint(previousPoint, rectangleSize, spiral);
+            var upperLeftPoint = new Point(currentPoint.X - rectangleSize.Width / 2,
+                currentPoint.Y - rectangleSize.Height / 2);
+            var rectangle = new Rectangle(upperLeftPoint, rectangleSize);
             rectangles.Add(rectangle);
             return rectangle;
         }
 
-        private bool CanPutRectangle(Point point, Size rectangleSize)
+        private bool CanPutRectangle(Point center, Size rectangleSize)
         {
-            var rectangle = new Rectangle(point, rectangleSize);
-            return rectangles.All(x => !x.DoesIntersect(rectangle)) && rectangle.IsInside(cloudBorder);
+            var upperLeftPoint = new Point(center.X - rectangleSize.Width / 2, center.Y - rectangleSize.Height / 2);
+            var rectangle = new Rectangle(upperLeftPoint, rectangleSize);
+            return rectangles.All(x => !x.IntersectsWith(rectangle));
         }
 
         private Point GetNextPoint(Point start, Size rectangleSize, ICurve curve)
         {
             var point = start;
             while (!CanPutRectangle(point, rectangleSize))
-            {
-                currentNumber++;
-                point = curve.GetNextPoint(currentNumber);
-                if (!point.IsInside(cloudBorder))
-                    return null;
-            }
+                point = curve.GetNextPoint();
             return point;
         }
 

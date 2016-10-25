@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Drawing;
 using NUnit.Framework;
 
 namespace TagsCloudVisualization
@@ -6,131 +7,96 @@ namespace TagsCloudVisualization
     [TestFixture]
     class CircularCloudLayouterTests
     {
-        private Point center;
+        private readonly Point center = new Point(500, 500);
         private CircularCloudLayouter cloudLayouter;
+
         [SetUp]
         public void SetUp()
         {
-            center = new Point(500, 500);
-            cloudLayouter = new CircularCloudLayouter(center, 0.01, new Size(1000, 1000));
+            cloudLayouter = new CircularCloudLayouter(center);
         }
-        [Test]
-        public void placedInCloudCenter_FirstRectangle()
+
+        [TestCase(10, 10, ExpectedResult = true)]
+        [TestCase(100, 50, ExpectedResult = true)]
+        [TestCase(20, 30, ExpectedResult = true)]
+        [TestCase(1000, 2000, ExpectedResult = true)]
+        [TestCase(500, 600, ExpectedResult = true)]
+        public bool FirstRectangle_PlacedInsideCloud_IsPlacedInCenter(int width, int height)
         {
-            var rectangleSize = new Size(10, 10);
+            var rectangleSize = new Size(width, height);
+
             var resultedRectangle = cloudLayouter.PutNextRectangle(rectangleSize);
-            Assert.AreEqual(center, resultedRectangle.Center);
+
+            return resultedRectangle.GetCenter().Equals(center);
         }
 
-        [Test]
-        public void doesIntersect_TwoRectangles()
+        [TestCase(12, 11, ExpectedResult = false)]
+        [TestCase(130, 18, ExpectedResult = false)]
+        [TestCase(27, 38, ExpectedResult = false)]
+        [TestCase(5000, 1, ExpectedResult = false)]
+        [TestCase(4800, 600, ExpectedResult = false)]
+        public bool TwoRectanlges_PlacedInsideCloud_DoNotIntersect(int width, int height)
         {
-            var rectangleSize = new Size(200, 200);
-            var center1 = new Point(100, 100);
-            var center2 = new Point(110, 110);
-            var firstRectangle = new Rectangle(center1, rectangleSize);
-            var secondRectangle = new Rectangle(center2, rectangleSize);
-            Assert.IsTrue(firstRectangle.DoesIntersect(secondRectangle));
-        }
+            var rectangleSize = new Size(width, height);
 
-        [Test]
-        public void doesIntersectOnBorder_TwoRectangles()
-        {
-            var rectangleSize = new Size(200, 200);
-            var center1 = new Point(100, 100);
-            var center2 = new Point(300, 100);
-            var firstRectangle = new Rectangle(center1, rectangleSize);
-            var secondRectangle = new Rectangle(center2, rectangleSize);
-            Assert.IsTrue(firstRectangle.DoesIntersect(secondRectangle));
-        }
-
-        [Test]
-        public void point_isInsideRectangle()
-        {
-            var point = new Point(110, 110);
-            var rectangleSize = new Size(200, 200);
-            var rectangleCenter = new Point(100, 100);
-            var rectangle = new Rectangle(rectangleCenter, rectangleSize);
-            Assert.IsTrue(point.IsInside(rectangle));
-        }
-
-        [Test]
-        public void point_IsNotInsideRectangle_IfOnBorder()
-        {
-            var point = new Point(200, 110);
-            var rectangleSize = new Size(200, 200);
-            var rectangleCenter = new Point(100, 100);
-            var rectangle = new Rectangle(rectangleCenter, rectangleSize);
-            Assert.IsFalse(point.IsInside(rectangle));
-        }
-
-        [Test]
-        public void rectangle_isInsideOther()
-        {
-            var rectangleSize1 = new Size(10, 10);
-            var rectangleSize2 = new Size(200, 200);
-            var center1 = new Point(110, 110);
-            var center2 = new Point(100, 100);
-            var firstRectangle = new Rectangle(center1, rectangleSize1);
-            var secondRectangle = new Rectangle(center2, rectangleSize2);
-            Assert.IsTrue(firstRectangle.IsInside(secondRectangle));
-        }
-
-        [Test]
-        public void rectangle_isNotInsideOther_IfHasSameBorder()
-        {
-            var rectangleSize1 = new Size(20, 10);
-            var rectangleSize2 = new Size(200, 200);
-            var center1 = new Point(290, 110);
-            var center2 = new Point(100, 100);
-            var firstRectangle = new Rectangle(center1, rectangleSize1);
-            var secondRectangle = new Rectangle(center2, rectangleSize2);
-            Assert.IsFalse(firstRectangle.IsInside(secondRectangle));
-        }
-
-        [Test]
-        public void doesNotIntersect_TwoPlacedRectangles()
-        {
-            var rectangleSize = new Size(10, 10);
             var firstRectangle = cloudLayouter.PutNextRectangle(rectangleSize);
             var secondRectangle = cloudLayouter.PutNextRectangle(rectangleSize);
-            Assert.IsFalse(firstRectangle.DoesIntersect(secondRectangle));
+
+            return firstRectangle.IntersectsWith(secondRectangle);
         }
 
-        [Test]
-        public void areNotSame_TwoPlacedRectangleCenters()
+        [TestCase(5, 4, ExpectedResult = false)]
+        [TestCase(125, 75, ExpectedResult = false)]
+        [TestCase(20, 40, ExpectedResult = false)]
+        [TestCase(1200, 1800, ExpectedResult = false)]
+        [TestCase(400, 750, ExpectedResult = false)]
+        public bool TwoRectangles_PlacedInsideCloud_DoNotHaveSameCenters(int width, int height)
         {
-            var rectangleSize = new Size(10, 10);
+            var rectangleSize = new Size(width, height);
+
             var firstRectangle = cloudLayouter.PutNextRectangle(rectangleSize);
             var secondRectangle = cloudLayouter.PutNextRectangle(rectangleSize);
-            Assert.AreNotEqual(firstRectangle.Center, secondRectangle.Center);
+
+            return firstRectangle.GetCenter().Equals(secondRectangle.GetCenter());
         }
 
-        [Test]
-        public void returnsNull_rectangleCannotBePlaced()
+        [TestCase(100, 10, 10, ExpectedResult = false)]
+        [TestCase(2, 50, 5, ExpectedResult = false)]
+        [TestCase(70, 30, 12, ExpectedResult = false)]
+        [TestCase(1000, 200, 25, ExpectedResult = false)]
+        [TestCase(899, 100, 100, ExpectedResult = false)]
+        public bool NewRectangle_PlacedInsideCloud_DoesNotIntersectsWithOthers(int width, int height, int count)
         {
-            var rectangleSize = new Size(10000, 10);
-            var firstRectangle = cloudLayouter.PutNextRectangle(rectangleSize);
-            Assert.AreEqual(null, firstRectangle);
-        }
+            var rectangleSize = new Size(width, height);
 
-        [Test]
-        public void cannotPlace_rectangleBiggerThanCloudBorder()
-        {
-            var rectangleSize = new Size(10000, 10);
-            var firstRectangle = cloudLayouter.PutNextRectangle(rectangleSize);
-            Assert.AreEqual(null, firstRectangle);
-        }
-
-        [Test]
-        public void newRectangle_doesNotIntersectWithOthers()
-        {
-            var rectangleSize = new Size(10, 10);
-            cloudLayouter.PutNextRectangle(rectangleSize);
-            cloudLayouter.PutNextRectangle(rectangleSize);
+            if (count == 0)
+                return false;
+            for (var i = 0; i < count; i++)
+                cloudLayouter.PutNextRectangle(rectangleSize);
             var rectangles = cloudLayouter.GetRectangles();
-            var rectanlge = cloudLayouter.PutNextRectangle(rectangleSize);
-            Assert.IsFalse(rectangles.Any(x => x.DoesIntersect(rectanlge)));
+            var rectangle = cloudLayouter.PutNextRectangle(rectangleSize);
+
+            return rectangles.Any(x => x.IntersectsWith(rectangle));
+        }
+
+        [TestCase(1, 1, 8, ExpectedResult = false)]
+        [TestCase(200, 51, 6, ExpectedResult = false)]
+        [TestCase(278, 3, 17, ExpectedResult = false)]
+        [TestCase(1210, 4012, 38, ExpectedResult = false)]
+        [TestCase(555, 60, 87, ExpectedResult = false)]
+        public bool OldRectangles_NewRectangleAddedToCloud_DoNotIntersectsWithEachOther(int width, int height, int count)
+        {
+            var rectangleSize = new Size(width, height);
+
+            if (count == 0)
+                return false;
+            for (var i = 0; i < count - 1; i++)
+                cloudLayouter.PutNextRectangle(rectangleSize);
+            var rectangles = cloudLayouter.GetRectangles();
+            var rectangle = cloudLayouter.PutNextRectangle(rectangleSize);
+            cloudLayouter.PutNextRectangle(rectangleSize);
+
+            return rectangles.Any(x => x.IntersectsWith(rectangle));
         }
     }
 }

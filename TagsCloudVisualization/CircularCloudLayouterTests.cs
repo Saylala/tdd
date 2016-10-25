@@ -1,6 +1,9 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Drawing;
+using System.IO;
 using NUnit.Framework;
+using NUnit.Framework.Interfaces;
 
 namespace TagsCloudVisualization
 {
@@ -14,6 +17,19 @@ namespace TagsCloudVisualization
         public void SetUp()
         {
             cloudLayouter = new CircularCloudLayouter(center);
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            if (!Equals(TestContext.CurrentContext.Result.Outcome, ResultState.Failure))
+                return;
+            var visualiser = new CloudVisualizer();
+            var data = cloudLayouter.GetRectangles();
+            var name = TestContext.CurrentContext.Test.Name + ".png";
+            var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, name);
+            visualiser.Visualise(data, path);
+            Console.WriteLine($"Tag cloud visualization saved to file {name}");
         }
 
         [TestCase(10, 10, ExpectedResult = true)]

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 
 
 namespace TagsCloudVisualization
@@ -40,7 +41,7 @@ namespace TagsCloudVisualization
         {
             var image = new Bitmap(imageWidth, imageHeight);
             Draw(data, image);
-            image.Save(filename);
+            image.Save(filename, ImageFormat.Png);
         }
     }
 }

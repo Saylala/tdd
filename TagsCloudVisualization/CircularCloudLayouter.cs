@@ -17,8 +17,7 @@ namespace TagsCloudVisualization
 
         public Rectangle PutNextRectangle(Size rectangleSize)
         {
-            var previousPoint = rectangles.Count > 0 ? rectangles[rectangles.Count - 1].GetCenter() : Center;
-            var currentPoint = GetNextPoint(previousPoint, rectangleSize, spiral);
+            var currentPoint = GetNextPoint(rectangleSize);
             var upperLeftPoint = new Point(currentPoint.X - rectangleSize.Width / 2,
                 currentPoint.Y - rectangleSize.Height / 2);
             var rectangle = new Rectangle(upperLeftPoint, rectangleSize);
@@ -33,11 +32,11 @@ namespace TagsCloudVisualization
             return rectangles.All(x => !x.IntersectsWith(rectangle));
         }
 
-        private Point GetNextPoint(Point start, Size rectangleSize, ICurve curve)
+        private Point GetNextPoint(Size rectangleSize)
         {
-            var point = start;
+            var point = Center;
             while (!CanPutRectangle(point, rectangleSize))
-                point = curve.GetNextPoint();
+                point = spiral.GetNextPoint();
             return point;
         }
 

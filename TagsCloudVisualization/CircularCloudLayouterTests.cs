@@ -81,7 +81,7 @@ namespace TagsCloudVisualization
         [TestCase(70, 30, 12, ExpectedResult = false)]
         [TestCase(1000, 200, 25, ExpectedResult = false)]
         [TestCase(899, 100, 100, ExpectedResult = false)]
-        public bool NewRectangle_PlacedInsideCloud_DoesNotIntersectsWithOthers(int width, int height, int count)
+        public bool NewRectangle_PlacedInsideCloud_DoesNotIntersectWithOthers(int width, int height, int count)
         {
             var rectangleSize = new Size(width, height);
 
@@ -100,19 +100,25 @@ namespace TagsCloudVisualization
         [TestCase(278, 3, 17, ExpectedResult = false)]
         [TestCase(1210, 4012, 38, ExpectedResult = false)]
         [TestCase(555, 60, 87, ExpectedResult = false)]
-        public bool OldRectangles_NewRectangleAddedToCloud_DoNotIntersectsWithEachOther(int width, int height, int count)
+        public bool OldRectangles_NewRectangleAddedToCloud_DoNotIntersectWithEachOther(int width, int height, int count)
         {
             var rectangleSize = new Size(width, height);
 
             if (count == 0)
                 return false;
-            for (var i = 0; i < count - 1; i++)
+            for (var i = 0; i < count; i++)
                 cloudLayouter.PutNextRectangle(rectangleSize);
-            var rectangles = cloudLayouter.GetRectangles();
-            var rectangle = cloudLayouter.PutNextRectangle(rectangleSize);
+            var oldRectangles = cloudLayouter.GetRectangles();
             cloudLayouter.PutNextRectangle(rectangleSize);
 
-            return rectangles.Any(x => x.IntersectsWith(rectangle));
+
+            foreach (var rectangle in oldRectangles)
+            {
+                var rectangles = oldRectangles.Where(x => !x.Equals(rectangle));
+                if (rectangles.Any(x => x.IntersectsWith(rectangle)))
+                    return true;
+            }
+            return false;
         }
     }
 }

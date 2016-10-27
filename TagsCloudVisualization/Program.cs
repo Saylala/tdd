@@ -18,9 +18,9 @@ namespace TagsCloudVisualization
         static void Main(string[] args)
         {
             var testNumber = double.Parse(args[0]);
-            var visualiser = new CloudVisualizer();
             var layouter = new CircularCloudLayouter(new Point(500, 500));
-            var testData = CreateLayout(layouter, 100);
+            var testData = CreateLayout(layouter, 500);
+            var visualiser = new CloudVisualizer(layouter.CloudBorder.Size);
             visualiser.Visualise(testData, $"test{testNumber}.png");
             Process.Start($"test{testNumber}.png");
         }

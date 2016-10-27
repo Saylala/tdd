@@ -4,7 +4,7 @@ using System.Drawing;
 
 namespace TagsCloudVisualization
 {
-    class Spiral : ICurve
+    class Spiral
     {
         private const double Step = 0.01;
         private const double Frequency = 50;

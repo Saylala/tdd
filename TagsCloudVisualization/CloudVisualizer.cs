@@ -10,23 +10,20 @@ namespace TagsCloudVisualization
     {
         private readonly Pen pen;
         private readonly Color backgroundColor;
-        private readonly int imageWidth;
-        private readonly int imageHeight;
+        private readonly Size size;
 
-        public CloudVisualizer(Pen pen, Color backgroundColor, int imageWidth, int imageHeight)
+        public CloudVisualizer(Pen pen, Color backgroundColor, Size size)
         {
             this.pen = pen;
             this.backgroundColor = backgroundColor;
-            this.imageWidth = imageWidth;
-            this.imageHeight = imageHeight;
+            this.size = size;
         }
 
-        public CloudVisualizer()
+        public CloudVisualizer(Size size)
         {
             pen = new Pen(Color.Yellow, 1);
             backgroundColor = Color.Black;
-            imageWidth = 1000;
-            imageHeight = 1000;
+            this.size = size;
         }
 
         private void DrawRectangles(Rectangle[] data, Graphics graphics)
@@ -39,7 +36,7 @@ namespace TagsCloudVisualization
 
         public void Visualise(Rectangle[] data, string filename)
         {
-            var image = new Bitmap(imageWidth, imageHeight);
+            var image = new Bitmap(size.Width, size.Height);
             var graphics = Graphics.FromImage(image);
             DrawRectangles(data, graphics);
             image.Save(filename, ImageFormat.Png);
@@ -47,7 +44,7 @@ namespace TagsCloudVisualization
 
         public void VisualiseWithCircle(Rectangle[] data, string filename)
         {
-            var image = new Bitmap(imageWidth, imageHeight);
+            var image = new Bitmap(size.Width, size.Height);
             var graphics = Graphics.FromImage(image);
             DrawRectangles(data, graphics);
             DrawCircle(data, graphics);

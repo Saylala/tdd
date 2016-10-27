@@ -10,5 +10,11 @@ namespace TagsCloudVisualization
             var y = (rectangle.Top + rectangle.Bottom) / 2;
             return new Point(x, y);
         }
+
+        public static bool IsInside(this Rectangle rectangle, Rectangle other)
+        {
+            return other.Left <= rectangle.Left && rectangle.Right <= other.Right &&
+                   other.Top <= rectangle.Top && rectangle.Bottom <= other.Bottom;
+        }
     }
 }

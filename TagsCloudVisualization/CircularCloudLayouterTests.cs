@@ -54,17 +54,15 @@ namespace TagsCloudVisualization
         {
             var rectangleSize = new Size(width, height);
 
-            var resultedRectangle = cloudLayouter.PutNextRectangle(rectangleSize);
-
-            Assert.AreEqual(Rectangle.Empty, resultedRectangle);
+            Assert.Throws<ArgumentException>(() => cloudLayouter.PutNextRectangle(rectangleSize));
         }
 
 
         [TestCase(12, 11)]
         [TestCase(130, 18)]
         [TestCase(27, 38)]
-        [TestCase(5000, 1)]
-        [TestCase(4800, 600)]
+        [TestCase(300, 1)]
+        [TestCase(280, 300)]
         public void TwoRectanlges_PlacedInsideCloud_DoNotIntersect(int width, int height)
         {
             var rectangleSize = new Size(width, height);
@@ -78,7 +76,7 @@ namespace TagsCloudVisualization
         [TestCase(5, 4)]
         [TestCase(125, 75)]
         [TestCase(20, 40)]
-        [TestCase(400, 750)]
+        [TestCase(400, 300)]
         public void TwoRectangles_PlacedInsideCloud_DoNotHaveSameCenters(int width, int height)
         {
             var rectangleSize = new Size(width, height);
@@ -92,8 +90,8 @@ namespace TagsCloudVisualization
         [TestCase(100, 10, 10)]
         [TestCase(2, 50, 5)]
         [TestCase(70, 30, 12)]
-        [TestCase(1000, 200, 25)]
-        [TestCase(899, 100, 100)]
+        [TestCase(100, 20, 25)]
+        [TestCase(89, 10, 100)]
         public void NewRectangle_PlacedInsideCloud_DoesNotIntersectWithOthers(int width, int height, int count)
         {
             var rectangleSize = new Size(width, height);
@@ -107,22 +105,18 @@ namespace TagsCloudVisualization
         [TestCase(1, 1, 8)]
         [TestCase(200, 51, 6)]
         [TestCase(278, 3, 17)]
-        [TestCase(1210, 4012, 38)]
-        [TestCase(555, 60, 87)]
-        public void OldRectangles_NewRectangleAddedToCloud_DoNotIntersectWithEachOther(int width, int height, int count)
+        [TestCase(12, 40, 38)]
+        [TestCase(55, 60, 87)]
+        public void Rectangles_PlacedInsideCloud_DoNotIntersectWithEachOther(int width, int height, int count)
         {
-            var rectangleSize = new Size(width, height);
+            var rectangles = CreateLayout(count, width, height);
 
-            var oldRectangles = CreateLayout(count, width, height);
-            cloudLayouter.PutNextRectangle(rectangleSize);
-            var intersections = 0;
-            foreach (var rectangle in oldRectangles)
+            foreach (var rectangle in rectangles)
             {
-                var rectangles = oldRectangles.Where(x => !x.Equals(rectangle));
-                intersections += rectangles.Count(x => x.IntersectsWith(rectangle));
+                var otherRectanlges = rectangles.Where(x => !x.Equals(rectangle));
+                foreach (var otherReactangle in otherRectanlges)
+                    Assert.IsFalse(rectangle.IntersectsWith(otherReactangle));
             }
-
-            Assert.AreEqual(0, intersections);
         }
 
         private Rectangle[] CreateLayout(int count, int width, int height)
@@ -200,7 +194,7 @@ namespace TagsCloudVisualization
         [Repeat(100)]
         public void Cloud_FormedWithDifferentRectangles_IsCircleWithTolerance_Repeating()
         {
-            const int rectanglesCount = 100;
+            const int rectanglesCount = 50;
             const int maxWidth = 50;
             const int maxHeight = 50;
             Cloud_FormedWithDifferentRectangles_IsCircleWithTolerance(rectanglesCount, maxWidth, maxHeight);

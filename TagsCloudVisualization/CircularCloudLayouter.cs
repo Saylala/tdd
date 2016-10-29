@@ -24,8 +24,6 @@ namespace TagsCloudVisualization
         public Rectangle PutNextRectangle(Size rectangleSize)
         {
             var currentPoint = GetNextPoint(rectangleSize);
-            if (currentPoint == Point.Empty)
-                return Rectangle.Empty;
             var upperLeftPoint = new Point(currentPoint.X - rectangleSize.Width / 2,
                 currentPoint.Y - rectangleSize.Height / 2);
             var rectangle = new Rectangle(upperLeftPoint, rectangleSize);
@@ -47,7 +45,7 @@ namespace TagsCloudVisualization
             {
                 point = spiral.GetNextPoint();
                 if (!point.IsInside(CloudBorder))
-                    return Point.Empty;
+                    throw new ArgumentException("Cannot put rectangle of this size");
             }
             return point;
         }
